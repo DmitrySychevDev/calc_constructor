@@ -8,6 +8,7 @@ module.exports = {
       base: ["14px", "15px"],
       xl: ["36px", "44px"],
     },
+
     fontFamily: {
       sans: ["Inter", "sans-serif"],
     },
