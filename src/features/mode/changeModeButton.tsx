@@ -9,7 +9,7 @@ import selectorIconActive from "assets/selector_active.svg";
 // Redux hooks
 import { useAppSelector, useAppDispatch } from "app/hooks";
 
-// Slice
+// actions
 import { changeMode } from "./modeSlice";
 
 export const ChangeModeButton: FC<ChangeButtonProps> = ({
@@ -32,7 +32,7 @@ export const ChangeModeButton: FC<ChangeButtonProps> = ({
   return (
     <button
       type="button"
-      className="flex border px-4 py-4 items-center gap-2 rounded bg-gray-200 disabled:bg-white"
+      className="flex px-4 py-4 items-center gap-2 rounded bg-gray-200 disabled:bg-white border border-solid border-gray-300"
       disabled={!isActive}
       onClick={() => {
         dispach(changeMode());
@@ -45,7 +45,7 @@ export const ChangeModeButton: FC<ChangeButtonProps> = ({
           className="w-5 h-5"
         />
       </div>
-      <p className="first-letter:uppercase text-base font-sans text-gray-700 font-medium">
+      <p className="first-letter:uppercase text-base font-sans text-gray-700 font-medium ">
         {mode}
       </p>
     </button>
