@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 // Types
@@ -6,8 +7,8 @@ import { Control } from "types/Control";
 interface ConstructorState {
   dashboard: Control[];
   canvas: Control[];
-  dragableBlock: number | null;
-  hoveredBlock: number | null;
+  dragableBlock: number;
+  hoveredBlock: number;
 }
 
 const initialState: ConstructorState = {
@@ -18,40 +19,43 @@ const initialState: ConstructorState = {
     { id: 4, type: "equal" },
   ],
   canvas: [],
-  dragableBlock: null,
-  hoveredBlock: null,
+  dragableBlock: -1,
+  hoveredBlock: -1,
 };
 
 export const constructorSlice = createSlice({
-  name: "mode",
+  name: "constructor",
   initialState,
   reducers: {
-    addToCanvas(state: ConstructorState) {
-      if (state.hoveredBlock !== null && state.dragableBlock !== null) {
+    addToCanvas(state) {
+      if (state.hoveredBlock !== -1 && state.dragableBlock !== -1) {
         const controlIndex = state.dashboard.findIndex(
           (elem) => elem.id === state.dragableBlock
         );
+        const hoveredIndex = state.canvas.findIndex(
+          (elem) => elem.id === state.hoveredBlock
+        );
         if (controlIndex !== -1) {
           state.canvas.splice(
-            state.hoveredBlock,
+            hoveredIndex + 1,
             0,
             state.dashboard[controlIndex]
           );
-          state.dashboard.splice(state.dragableBlock, 1);
+          state.dashboard?.splice(controlIndex, 1);
         }
-      } else if (state.hoveredBlock === null) {
-        if (state.dragableBlock !== null) {
+      } else if (state.hoveredBlock === -1) {
+        if (state.dragableBlock !== -1) {
           const controlIndex = state.dashboard.findIndex(
             (elem) => elem.id === state.dragableBlock
           );
           if (controlIndex !== -1) {
             state.canvas.push(state.dashboard[controlIndex]);
-            state.dashboard.splice(state.dragableBlock, 1);
+            state.dashboard.splice(controlIndex, 1);
           }
         }
       }
     },
-    deleteFromCanvas(state: ConstructorState, action: PayloadAction<number>) {
+    deleteFromCanvas(state, action: PayloadAction<number>) {
       const id = action.payload;
       const controlIndex = state.canvas.findIndex((elem) => elem.id === id);
       if (controlIndex !== -1) {
@@ -59,31 +63,26 @@ export const constructorSlice = createSlice({
         state.canvas.splice(controlIndex, 1);
       }
     },
-    changeOrder(state: ConstructorState) {
-      if (state.hoveredBlock !== null) {
+    changeOrder(state) {
+      if (state.hoveredBlock !== -1) {
         const controlIndex = state.canvas.findIndex(
+          (elem) => elem.id === state.dragableBlock
+        );
+        const hoveredIndex = state.canvas.findIndex(
           (elem) => elem.id === state.hoveredBlock
         );
-        if (controlIndex !== -1) {
-          state.canvas.splice(
-            state.hoveredBlock,
-            0,
-            state.canvas.splice(controlIndex, 1)[1]
-          );
+        if (controlIndex !== -1 && hoveredIndex !== -1) {
+          const temp = state.canvas[controlIndex];
+          state.canvas[controlIndex] = state.canvas[hoveredIndex];
+          state.canvas[hoveredIndex] = temp;
         }
       }
     },
-    setDragbleBlock(
-      state: ConstructorState,
-      action: PayloadAction<number | null>
-    ) {
+    setDragbleBlock(state, action: PayloadAction<number>) {
       // eslint-disable-next-line no-param-reassign
       state.dragableBlock = action.payload;
     },
-    setHoveredBlock(
-      state: ConstructorState,
-      action: PayloadAction<number | null>
-    ) {
+    setHoveredBlock(state, action: PayloadAction<number>) {
       // eslint-disable-next-line no-param-reassign
       state.hoveredBlock = action.payload;
     },
@@ -98,4 +97,4 @@ export const {
   setHoveredBlock,
 } = constructorSlice.actions;
 
-export default constructorSlice.reducer;
+export const constructorReducer = constructorSlice.reducer;

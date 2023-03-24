@@ -1,11 +1,17 @@
 import React, { FC } from "react";
 
-const Button: FC<ButtonProps> = ({
-  type,
-  event,
-  value,
-  isReady,
-}: ButtonProps) => {
+// Redux hooks
+import { useAppDispatch } from "app/hooks";
+
+import {
+  setValue,
+  setOperator,
+  getResult,
+} from "features/calculator/calculatorSlice";
+
+const Button: FC<ButtonProps> = ({ type, value, isReady }: ButtonProps) => {
+  const dispach = useAppDispatch();
+
   let btnStyle = `rounded-md text-base ${
     isReady
       ? "cursor-pointer pointer-events-all"
@@ -31,9 +37,29 @@ const Button: FC<ButtonProps> = ({
     btnStyle = btnStyle.replace("px-8", "px-[71px]");
   }
 
+  const clickHandler: React.MouseEventHandler<HTMLButtonElement> = (e) => {
+    e.preventDefault();
+    if (isReady) {
+      switch (type) {
+        case "nubmber":
+          dispach(setValue(value));
+          break;
+        case "operator":
+          if (value === "+" || value === "-" || value === "*" || value === "/")
+            dispach(setOperator(value));
+          break;
+        case "equal":
+          dispach(getResult());
+          break;
+        default:
+          console.log("untracked currentValue");
+      }
+    }
+  };
+
   return (
     <button
-      onClick={event}
+      onClick={clickHandler}
       type="button"
       className={btnStyle}
       disabled={!isReady}
@@ -45,7 +71,6 @@ const Button: FC<ButtonProps> = ({
 
 interface ButtonProps {
   type: "nubmber" | "operator" | "equal";
-  event: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   value: string;
   isReady: boolean;
 }
