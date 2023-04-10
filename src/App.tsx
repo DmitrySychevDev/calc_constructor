@@ -1,14 +1,19 @@
-import React, { useState } from "react";
+import React from "react";
+import { Provider } from "react-redux";
+
+// Store
+import { store } from "./app/store";
+
+// Pages
+import { Home } from "./pages";
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
-    <div className="App">
-      <header>
-        <h1 className="font-mono mx-10 m-10">rонструктор калькулятора</h1>
-      </header>
-    </div>
+    <Provider store={store}>
+      <div className="App">
+        <Home />
+      </div>
+    </Provider>
   );
 }
 
